@@ -141,6 +141,7 @@ class ProductControllerTests {
         MvcResult result = mockMvc.perform(get("/api/v1/products/chat/stream")
                         .param("message", "I need a laptop for gaming")
                         .accept(MediaType.TEXT_EVENT_STREAM))
+                .andExpect(content().contentType("text/event-stream;charset=UTF-8"))
                 .andExpect(request().asyncStarted()) // SseEmitter를 반환하면 비동기 요청이 시작됨
                 .andReturn();
 

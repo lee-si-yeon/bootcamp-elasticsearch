@@ -76,7 +76,7 @@ public class ProductController {
     }
 
     @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter chatStream(@RequestParam String message) {
+    public ResponseEntity<SseEmitter> chatStream(@RequestParam String message) {
         SseEmitter emitter = new SseEmitter(0L); // 0 : 서버 쪽 타임아웃 없음
 
         Disposable subscription = productChatService.chatStream(message).subscribe(
@@ -97,7 +97,9 @@ public class ProductController {
         emitter.onTimeout(subscription::dispose);
         emitter.onError(e -> subscription.dispose());
 
-        return emitter;
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(MediaType.TEXT_EVENT_STREAM_VALUE + ";charset=UTF-8"))
+                .body(emitter);
     }
 
     public record CreateRequest(String name, List<String> keywords) {}
