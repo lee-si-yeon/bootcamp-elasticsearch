@@ -1,6 +1,9 @@
 spring:
   application:
     name: elasticsearch
+  autoconfigure:
+    # default 프로필 : 임베딩은 OpenAI만 사용 (Ollama 임베딩 자동 설정 제외)
+    exclude: org.springframework.ai.model.ollama.autoconfigure.OllamaEmbeddingAutoConfiguration
   config:
     import: optional:file:.env[.properties]
   datasource:
@@ -9,8 +12,14 @@ spring:
     password: ${DATABASE_PASSWORD:vector123}
   jpa:
     hibernate:
-      ddl-auto: update # 외부 DB(PostgreSQL)는 기본값이 none이라 테이블이 만들어지지 않는다
+      ddl-auto: update  # 외부 DB(PostgreSQL)는 기본값이 none이라 테이블이 만들어지지 않음
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-dummy}  # 키가 없어도 기동은 되게 기본값을 둠 (실제 호출 시 401)
+      embedding:
+        model: text-embedding-3-small  # 기본값(ada-002)은 차원 축소(dimensions)를 지원하지 않음
+        dimensions: 384
