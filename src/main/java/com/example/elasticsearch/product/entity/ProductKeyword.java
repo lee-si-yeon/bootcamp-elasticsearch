@@ -1,5 +1,6 @@
 package com.example.elasticsearch.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class ProductKeyword {
     @ManyToOne(fetch = FetchType.LAZY)
     @Setter
     @Getter
+    @JsonIgnore
     private Product product;
 
     @Column
