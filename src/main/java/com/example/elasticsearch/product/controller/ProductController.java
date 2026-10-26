@@ -1,7 +1,7 @@
 package com.example.elasticsearch.product.controller;
 
-import co.elastic.clients.elasticsearch.core.SearchRequest;
 import com.example.elasticsearch.product.entity.Product;
+import com.example.elasticsearch.product.service.ProductChatService;
 import com.example.elasticsearch.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductChatService productChatService;
 
     @PostMapping
     public ResponseEntity<Product> create(@RequestBody CreateRequest request) {
@@ -65,8 +66,14 @@ public class ProductController {
         return ResponseEntity.ok(productService.findSimilarProducts(id, k));
     }
 
+    @PostMapping("/chat")
+    public ResponseEntity<ProductChatService.ChatResponse> chat(@RequestBody ChatRequest request) {
+        return ResponseEntity.ok(productChatService.chat(request.message()));
+    }
+
     public record CreateRequest(String name, List<String> keywords) {}
     public record UpdateRequest(String name, List<String> keywords) {}
+    public record ChatRequest(String message) {}
     public record SearchRequest(List<String> keywords, int k) {
         public SearchRequest {
             if (k <= 0) k = 10;  // k를 보내지 않으면 0 → 기본값 10
