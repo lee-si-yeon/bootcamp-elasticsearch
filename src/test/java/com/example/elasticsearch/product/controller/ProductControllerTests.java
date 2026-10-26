@@ -124,6 +124,7 @@ class ProductControllerTests {
         productService.create("Gaming Laptop", List.of("gaming", "laptop", "high-performance"));
 
         mockMvc.perform(post("/api/v1/products/chat")
+                        .param("userId", "controller-test")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"message": "I need a laptop for gaming. Can you recommend something?"}
@@ -140,6 +141,7 @@ class ProductControllerTests {
 
         MvcResult result = mockMvc.perform(get("/api/v1/products/chat/stream")
                         .param("message", "I need a laptop for gaming")
+                        .param("userId", "stream-test")
                         .accept(MediaType.TEXT_EVENT_STREAM))
                 .andExpect(content().contentType("text/event-stream;charset=UTF-8"))
                 .andExpect(request().asyncStarted()) // SseEmitter를 반환하면 비동기 요청이 시작됨
@@ -151,5 +153,16 @@ class ProductControllerTests {
 
         org.junit.jupiter.api.Assertions.assertTrue(body.contains("event:message"));
         org.junit.jupiter.api.Assertions.assertTrue(body.contains("data:{\"content\":"));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/products/chat - userId가 없으면 400")
+    void t10() throws Exception {
+        mockMvc.perform(post("/api/v1/products/chat")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"message": "hello"}
+                                """))
+                .andExpect(status().isBadRequest());
     }
 }

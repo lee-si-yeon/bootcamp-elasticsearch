@@ -70,16 +70,17 @@ public class ProductController {
         return ResponseEntity.ok(productService.findSimilarProducts(id, k));
     }
 
+    // userId는 필수임. 기본값을 두면 userId를 안 보낸 모든 사용자가 모든 사용자가 한 대화방을 공유하게 됨 (실무에서는 요청 파라미터 대신 로그인 정보에서 꺼냄)
     @PostMapping("/chat")
-    public ResponseEntity<ProductChatService.ChatResponse> chat(@RequestBody ChatRequest request) {
-        return ResponseEntity.ok(productChatService.chat(request.message()));
+    public ResponseEntity<ProductChatService.ChatResponse> chat(@RequestBody ChatRequest request, @RequestParam String userId) {
+        return ResponseEntity.ok(productChatService.chat(request.message(), userId));
     }
 
     @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> chatStream(@RequestParam String message) {
-        SseEmitter emitter = new SseEmitter(0L); // 0 : 서버 쪽 타임아웃 없음
+    public ResponseEntity<SseEmitter> chatStream(@RequestParam String message, @RequestParam String userId) {
+        SseEmitter emitter = new SseEmitter(0L);  // 0 : 서버 쪽 타임아웃 없음
 
-        Disposable subscription = productChatService.chatStream(message).subscribe(
+        Disposable subscription = productChatService.chatStream(message, userId).subscribe(
                 token -> {
                     try {
                         // 토큰을 JSON({"content":" How"})으로 보내야 앞 공백이 사라지지 않음

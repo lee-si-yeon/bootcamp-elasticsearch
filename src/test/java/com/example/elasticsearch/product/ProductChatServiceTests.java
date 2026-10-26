@@ -31,7 +31,7 @@ public class ProductChatServiceTests {
     void t1() {
         productService.create("Espresso Coffee", List.of("coffee", "espresso", "beverage"));
 
-        List<String> tokens = productChatService.chatStream("Recommend a hot drink").collectList().block();
+        List<String> tokens = productChatService.chatStream("Recommend a hot drink", "stream-user").collectList().block();
 
         assertNotNull(tokens);
         assertTrue(tokens.size() > 1);
