@@ -2,7 +2,6 @@ package com.example.elasticsearch.product.tool;
 
 import com.example.elasticsearch.TestcontainersConfiguration;
 import com.example.elasticsearch.product.entity.Product;
-import com.example.elasticsearch.product.repository.ProductDocumentRepository;
 import com.example.elasticsearch.product.repository.ProductRepository;
 import com.example.elasticsearch.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +12,6 @@ import org.springframework.ai.tool.ToolCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
@@ -37,22 +35,14 @@ public class ProductSearchToolTests {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private ProductDocumentRepository productDocumentRepository;
-
-    @Autowired
-    private ElasticsearchOperations elasticsearchOperations;
-
     private Product gamingLaptop;
 
     @BeforeEach
     void setUp() {
-        productDocumentRepository.deleteAll();
         productRepository.deleteAll();
         gamingLaptop = productService.create("Gaming Laptop", List.of("gaming", "laptop", "high-performance"));
         productService.create("Business Laptop", List.of("business", "laptop", "office"));
         productService.create("Gaming Mouse", List.of("gaming", "mouse", "RGB"));
-        elasticsearchOperations.indexOps(com.example.elasticsearch.product.document.ProductDocument.class).refresh();
     }
 
     private Map<String, ToolCallback> tools() {
