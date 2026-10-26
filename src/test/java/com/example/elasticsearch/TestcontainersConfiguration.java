@@ -13,7 +13,10 @@ public class TestcontainersConfiguration {
     @Bean
     @ServiceConnection
     PostgreSQLContainer postgresContainer() {
-        return new PostgreSQLContainer(DockerImageName.parse("postgres:17"));
+        return new PostgreSQLContainer(DockerImageName
+                .parse("pgvector/pgvector:pg17")      // pgvector 확장이 들어 있는 PostgreSQL 17
+                .asCompatibleSubstituteFor("postgres"))
+                .withInitScript("init-pgvector.sql");  // 시작 시 CREATE EXTENSION vector 실행
     }
 
     @Bean
