@@ -1,0 +1,31 @@
+package com.example.elasticsearch.product.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+
+@Entity
+@NoArgsConstructor
+public class ProductKeyword {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Setter
+    @Getter
+    private Product product;
+
+    @Column
+    @Getter
+    @Setter
+    private String keyword;
+
+    public ProductKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+}
